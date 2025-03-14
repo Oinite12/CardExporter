@@ -14,6 +14,7 @@ local json = require "json"
 local output_root = "output/"
 local output_images = true
 local output_on_hover = false
+local bad_chars = '[/<>:"\\|?*]'
 
 local sets = {}
 sets["Joker"] = {}
@@ -61,7 +62,7 @@ local function output_image(card)
     if output_images and G.ASSET_ATLAS and G.ASSET_ATLAS[card.atlas] and G.ASSET_ATLAS[card.atlas].image_data then
         if card.set == "Booster" then card.set = "Other" end
         local has_loc = not (not G.localization.descriptions[card.set][card.key])
-        local file_path = output_root .. "images/" .. (has_loc and G.localization.descriptions[card.set][card.key].name or card.key) .. " (" .. (card.mod and (card.mod.id == "Balatro" and "Balatro" or SMODS.Mods[card.mod.id].name) or "") .. ").png"
+        local file_path = output_root .. "images/" .. (has_loc and G.localization.descriptions[card.set][card.key].name or card.key):gsub(bad_chars, "-") .. " (" .. (card.mod and (card.mod.id == "Balatro" and "Balatro" or SMODS.Mods[card.mod.id].name):gsub(bad_chars, "-") or "") .. ").png"
         local w = (G.ASSET_ATLAS[card.atlas].px * G.SETTINGS.GRAPHICS.texture_scaling)
         local h = (G.ASSET_ATLAS[card.atlas].py * G.SETTINGS.GRAPHICS.texture_scaling)
         local newImageData = love.image.newImageData(w, h)
